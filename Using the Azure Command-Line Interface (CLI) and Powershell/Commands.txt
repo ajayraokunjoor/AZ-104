@@ -35,3 +35,55 @@ New-AzVirtualNetwork `
     -ResourceGroupName $rgps.ResourceGroupName `
     -Location $rgps.Location `
     -AddressPrefix "10.0.0.0/16" 
+
+# Create Storage Account
+az storage account create \
+  --name arkstorage4568 \
+  --resource-group rsg1 \
+  --location centralindia \
+  --sku Standard_LRS \
+  --kind StorageV2
+ #just in case you have opened powershell and running az bash commands use ` instead of \
+ az storage account create `
+  --name arkstorage4568 `
+  --resource-group rsg1 `
+  --location centralindia `
+  --sku Standard_LRS `
+  --kind StorageV2
+
+  #Create a File Share 
+  az storage share create \
+  --name arkfileshare \
+  --account-name arkstorage4568
+# running same command in powershell 
+  az storage share create `
+  --name arkfileshare  `
+  --account-name arkstorage4568 `
+
+$key = (az storage account keys list --resource-group rsg1 --account-name arkstorage4568 --query "[0].value" --output tsv)
+
+az storage share create `
+  --name arkfileshare `
+  --account-name arkstorage4568 `
+  --account-key $key
+
+#Create a VM 
+$rg = Get-AzResourceGroup 
+
+az vm create `
+  --resource-group $($rg.ResourceGroupName) `
+  --location $($rg.Location) `
+  --name arkvm `
+  --image Ubuntu2204 `
+  --size Standard_B1ms `
+  --admin-username arkrak `
+  --generate-ssh-keys `
+  --no-wait
+  
+# PowerShell commands 
+  Id     Duration CommandLine
+  --     -------- -----------
+   1        1.438 az group list 
+   2        0.149 Get-AzSubscription 
+   3        0.063 Get-CloudDrive 
+   4        0.521 Get-AzResource | Format-Table
